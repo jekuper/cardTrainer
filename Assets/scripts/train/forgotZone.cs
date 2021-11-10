@@ -14,13 +14,12 @@ public class forgotZone : MonoBehaviour, IPointerClickHandler {
     public void OnPointerClick(PointerEventData eventData) {
         if (!train.isCardSelected)
             return;
-        GameObject chosenCard = train.chosenCard;
-        if (!chosenCard.GetComponent<cardManager>().isCardOpened) {
-            chosenCard.GetComponent<cardManager>().ShowTranslationSide();
-
-            int ind = chosenCard.GetComponent<cardManager>().carryWordInd;
-            Globals.dataBase[ind].refreshTime();
-            Globals.SaveWordData();
+        cardManager chosenCard = train.chosenCard.GetComponent<cardManager>();
+        if (!chosenCard.isCardOpened) {
+            chosenCard.ShowTranslationSide();
+            
+            Globals.dataBase[chosenCard.carryWordInd].refreshTime();
+            SaveSystem.SaveWordData(Settings.curLang);
         }
         else {
             Vector2 pos = eventData.position;
@@ -32,11 +31,12 @@ public class forgotZone : MonoBehaviour, IPointerClickHandler {
                               Mathf.Clamp(pos.y, (cardSizes.y / 2) - canvas.GetComponent<RectTransform>().rect.height, rt.anchoredPosition.y + (rt.rect.height / 2) - (canvas.GetComponent<RectTransform>().rect.height / 2) - (cardSizes.y / 2)));
 
 
-            chosenCard.GetComponent<cardManager>().ShowWordSide();
-            chosenCard.GetComponent<cardManager>().targetPosition = pos;
-            chosenCard.GetComponent<cardManager>().targetSize /= 2;
+            chosenCard.ShowWordSide();
+            chosenCard.targetPosition = pos;
+            chosenCard.targetSize /= 2;
             train.isCardSelected = false;
             train.chosenCard = null;
+            train.leaveButton.interactable = true;
         }
     }
 }

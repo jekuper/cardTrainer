@@ -9,17 +9,24 @@ public static class Globals
 {
     public static List<word> dataBase = new List<word>();
 
-    public static void AddWord(string word, string translation, string definition = "") {
-        if (word == "" || translation == "")
-            return;
-        foreach (word item in dataBase) {
-            if (item.fullWord == word)
-                return;
+    public static void AddWord(word w) {
+        bool isFound = false;
+        for (int i = 0; i < dataBase.Count; i++) {
+            if (dataBase[i].fullWord == w.fullWord) {
+                foreach (string tr in w.translation) {
+                    if (!dataBase[i].translation.Contains(tr)) {
+                        dataBase[i].translation.Add(word.SanitizeString(w.translation[0]));
+                    }
+                }
+                isFound = true;
+                break;
+            }
         }
-        word w = new word(word, translation, definition);
-        dataBase.Add(w);
+        if (!isFound) {
+            dataBase.Add(w);
+        }
 
-        SaveWordData();
+        SaveSystem.SaveWordData(Settings.curLang);
     }
 
     public static int DeleteWord(string word) {
@@ -27,7 +34,7 @@ public static class Globals
             if (dataBase[i].fullWord == word) {
                 dataBase.RemoveAt(i);
 
-                SaveWordData();
+                SaveSystem.SaveWordData(Settings.curLang);
 
                 return 0;
             }
@@ -38,42 +45,56 @@ public static class Globals
         if (ind >= dataBase.Count)
             return 1;
         dataBase.RemoveAt(ind);
-        SaveWordData();
+        SaveSystem.SaveWordData(Settings.curLang);
         return 0;
     }
+    private static int statComp(int x, int y) {
+        int cnt1 = 0, cnt2 = 0;
+        foreach (int item in dataBase[x].statistic) {
+            if (item == 0)
+                cnt1--;
+            else
+                cnt1++;
+        }
+        foreach (int item in dataBase[y].statistic) {
+            if (item == 0)
+                cnt2--;
+            else
+                cnt2++;
+        }
+        return cnt1.CompareTo(cnt2);
+    }
+    public static List<int> sortByStatistic(int cnt) {
 
-    public static void LoadWordData() {
-        dataBase.Clear();
-        string[] lines = LoadId("wordBase");
-        foreach (string line in lines) {
-            dataBase.Add(new word(line));
+        List<int> te = new List<int>();
+        for (int i = 0; i < dataBase.Count; i++) {
+            te.Add(i);
         }
-    }
-    public static void SaveWordData() {
-        string encrypted = "";
-        foreach (word item in dataBase) {
-            encrypted += item.toOneString();
-            encrypted += "\n";
+        te.Sort(statComp);
+
+        List<int> res = new List<int>();
+
+        for (int i = 0; i < Mathf.Min(te.Count, cnt); i++) {
+            res.Add(te[i]);
         }
-        if (encrypted.Length > 0)
-            encrypted = encrypted.Remove(encrypted.Length - 1);
-        SaveId("wordBase", encrypted);
+
+        for (int i = 0; i < res.Count; i++) {
+            int temp = res[i];
+            int randomIndex = Random.Range(i, res.Count);
+            res[i] = res[randomIndex];
+            res[randomIndex] = temp;
+        }
+
+        return res;
     }
 
-    public static void SaveId(string fileId, string data) {
-        string path = Application.persistentDataPath + "/" + fileId + ".save";
-        File.WriteAllText(path, data);
-    }
-    public static string[] LoadId(string fileId) {
-        string path = Application.persistentDataPath + "/" + fileId + ".save";
-        if (!File.Exists(path)) {
-            return new string[0];
-        }
-        string[] lines = File.ReadAllLines(@path);
-        return lines;
-    }
+    
+    
+
     
 }
+
+
 
 public static class ScaleSystem {
     public static Vector2 scalePosToCanvas(Vector2 posOnScreen, RectTransform canvas) {

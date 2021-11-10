@@ -36,13 +36,13 @@ public class archive : MonoBehaviour {
         }
         foreach (word item in resultList) {
             GameObject newElement = Instantiate(wordPrefab, wordListContent.transform);
-            item.LoadToPrefab(newElement);
+            newElement.GetComponent<wordListPrefab>().LoadWord(item);
         }
     }
 
     public void AddButtonClicked() {
         if (wordInputField.text != "" && translationInputField.text != "") {
-            Globals.AddWord(wordInputField.text, translationInputField.text, definitionInputField.text);
+            Globals.AddWord(new word(wordInputField.text, new List<string>() { translationInputField.text }, definitionInputField.text));
             wordInputField.text = "";
             translationInputField.text = "";
             definitionInputField.text = "";
@@ -55,11 +55,11 @@ public class archive : MonoBehaviour {
     }
 
     private void OnApplicationQuit() {
-        Globals.SaveWordData();
+        SaveSystem.SaveWordData(Settings.curLang);
     }
     private void OnApplicationFocus(bool focus) {
         if (!focus) {
-            Globals.SaveWordData();
+            SaveSystem.SaveWordData(Settings.curLang);
         }
     }
 }

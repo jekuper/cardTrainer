@@ -9,6 +9,7 @@ public class startMenu : MonoBehaviour
     void Start()
     {
         versionText.text = "@Jekuper, "+Application.productName+", ver. "+ Application.version;
-        Globals.LoadWordData();
+        SaveSystem.LoadSettingsData();
+        SaveSystem.LoadWordData(Settings.curLang);
     }
 }

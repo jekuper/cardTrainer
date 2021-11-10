@@ -14,6 +14,13 @@ public class sceneCameraManager : MonoBehaviour
                 Debug.LogWarning("reminder is not set. Object name: " + name);
             return;
         }
+        if (sceneName == "addingMenu" && Settings.curLang == "") {
+            if (reminder != null)
+                reminder.ShowReminder("you need to choose/select current language in settings");
+            else
+                Debug.LogWarning("reminder is not set. Object name: " + name);
+            return;
+        }
         SceneManager.LoadScene(sceneName);
     }
     public void QuitGame() {

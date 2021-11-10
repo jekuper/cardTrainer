@@ -12,8 +12,9 @@ public class editor : MonoBehaviour
     public int selectedWordInd = -1;
 
     public TMP_InputField wordInputField;
-    public TMP_InputField translationInputField;
     public TMP_InputField definitionInputField;
+    public editorTranslationManager trManager;
+    public statisticManager stManager;
     public GameObject mask;
     public archive arch;
 
@@ -39,21 +40,24 @@ public class editor : MonoBehaviour
             return;
         selectedWordInd = ind;
         wordInputField.text = word.decrypt(Globals.dataBase[ind].fullWord);
-        translationInputField.text = word.decrypt(Globals.dataBase[ind].translation);
+        trManager.copy = new List<string>(w.translation);
+        trManager.InitList();
         definitionInputField.text = word.decrypt(Globals.dataBase[ind].definition);
+        stManager.LoadStatistic(w.statistic);
         targetPosition = new Vector2(0, 0);
     }
     public void HideEditor(bool saveChages) {
         mask.SetActive(false);
         if (saveChages) {
+            List<int> statistic = new List<int>(Globals.dataBase[selectedWordInd].statistic);
             Globals.DeleteWord(selectedWordInd);
-            Globals.AddWord(wordInputField.text, translationInputField.text, definitionInputField.text);
+            Globals.AddWord(new word(wordInputField.text, trManager.copy, definitionInputField.text, statistic));
             arch.UpdateWordList();
         }
         targetPosition = new Vector2(0, -canvas.GetComponent<RectTransform>().rect.height);
         selectedWordInd = -1;
         wordInputField.text = "";
-        translationInputField.text = "";
+//        translationInputField.text = "";
         definitionInputField.text = "";
     }
     void Update()

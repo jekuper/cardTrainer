@@ -15,14 +15,17 @@ public class knowZone : MonoBehaviour, IPointerClickHandler {
     public void OnPointerClick(PointerEventData eventData) {
         if (!train.isCardSelected || train.chosenCard.GetComponent<cardManager>().isCardOpened)
             return;
-        GameObject chosenCard = train.chosenCard;
+        
+        cardManager chosenCard = train.chosenCard.GetComponent<cardManager>();
         GameObject answer = chosenCard.transform.Find("answer").gameObject;
 
+        int ind = chosenCard.carryWordInd;
         if (answer != null && answer.activeSelf && answer.GetComponent<TMP_InputField>().text != "") {
-            if(answer.GetComponent<TMP_InputField>().text == Globals.dataBase[train.chosenCard.GetComponent<cardManager>().carryWordInd].translation) {
-                int ind = chosenCard.GetComponent<cardManager>().carryWordInd;
+            if((!chosenCard.isCardInputReversed && Globals.dataBase[ind].checkAnswer(answer.GetComponent<TMP_InputField>().text)) ||
+                (chosenCard.isCardInputReversed && Globals.dataBase[ind].fullWord == answer.GetComponent<TMP_InputField>().text)) {
                 Globals.dataBase[ind].refreshTime();
-                Globals.SaveWordData();
+                Globals.dataBase[ind].statistic.Add(1);
+                SaveSystem.SaveWordData(Settings.curLang);
 
                 Vector2 pos = eventData.position;
                 pos = ScaleSystem.scalePosToCanvas(pos, canvas.GetComponent<RectTransform>());
@@ -32,14 +35,15 @@ public class knowZone : MonoBehaviour, IPointerClickHandler {
 
                 pos = new Vector2(Mathf.Clamp(pos.x, -(canvas.GetComponent<RectTransform>().rect.width) + (cardSizes.x / 4), -cardSizes.x / 4), Mathf.Clamp(pos.y, rt.anchoredPosition.y - (rt.rect.height / 2) + (cardSizes.y / 2),   rt.anchoredPosition.y + (rt.rect.height / 2) - (cardSizes.y / 2)));
 
-                chosenCard.GetComponent<cardManager>().answerInputField.SetActive(false);
-                chosenCard.GetComponent<cardManager>().targetPosition = pos;
-                chosenCard.GetComponent<cardManager>().targetSize /= 2;
+                chosenCard.answerInputField.SetActive(false);
+                chosenCard.targetPosition = pos;
+                chosenCard.targetSize /= 2;
                 train.isCardSelected = false;
                 train.chosenCard = null;
+                train.leaveButton.interactable = true;
             }
             else {
-                chosenCard.GetComponent<cardManager>().ShowTranslationSide();
+                chosenCard.ShowTranslationSide();
             }
         }
     }

@@ -13,9 +13,11 @@ public class cardManager : MonoBehaviour, IPointerClickHandler
     public bool isCardOpened = false;
     public bool isCardUsed = false;
     public bool isCardChoosed = false;
+    public bool isCardInputReversed = false;
     [Range(0, 360)]public float rotSpeed = 100f;
     [Range(0.001f, 1)] public float sizeLerp = 0.1f;
     [Range(0.001f, 1)] public float posLerp = 0.1f;
+    public int wordTranslationInd = -1;
     public int carryWordInd;
 
 
@@ -24,6 +26,7 @@ public class cardManager : MonoBehaviour, IPointerClickHandler
     public Vector2 targetSize = new Vector2(0, 0);
     public Vector2 startPosition;
 
+
     public void ShowWordSide() {
         targetAngle = new Vector3(0, 0, 0);
         isCardOpened = false;
@@ -31,20 +34,37 @@ public class cardManager : MonoBehaviour, IPointerClickHandler
     public void ShowTranslationSide() {
         targetAngle = new Vector3(0, 180, 0);
         isCardOpened = true;
+        Globals.dataBase[carryWordInd].statistic.Add(0);
     }
     public void LoadWord() {
-        if (wordText.GetComponent<TextMeshProUGUI>().enabled)
-            wordText.GetComponent<TextMeshProUGUI>().text = word.decrypt(Globals.dataBase[carryWordInd].fullWord);
+        string front, back;
+        front = word.decrypt(Globals.dataBase[carryWordInd].fullWord);
+        back = word.decrypt(Globals.dataBase[carryWordInd].translationToString());
+        if (isCardInputReversed) {
+            back = front;
+            if (wordTranslationInd == -1)
+                wordTranslationInd = Random.Range(0, Globals.dataBase[carryWordInd].translation.Count - 1);
+            front = Globals.dataBase[carryWordInd].translation[wordTranslationInd];
+        }
+        if (wordText.GetComponent<TextMeshProUGUI>().enabled) {
+            wordText.GetComponent<TextMeshProUGUI>().text = front;
+        }
 
-        if (translationText.GetComponent<TextMeshProUGUI>().enabled)
-            translationText.GetComponent<TextMeshProUGUI>().text = word.decrypt(Globals.dataBase[carryWordInd].translation);
+        if (translationText.GetComponent<TextMeshProUGUI>().enabled) {
+            translationText.GetComponent<TextMeshProUGUI>().text = back;
+        }
 
-        if (definitionText.GetComponent<TextMeshProUGUI>().enabled)
+        if (definitionText.GetComponent<TextMeshProUGUI>().enabled) {
             definitionText.GetComponent<TextMeshProUGUI>().text = word.decrypt(Globals.dataBase[carryWordInd].definition);
+        }
+        if (answerInputField.activeSelf && isCardInputReversed) {
+            answerInputField.GetComponent<TMP_InputField>().placeholder.GetComponent<TextMeshProUGUI>().text = "full word...";
+        }
     }
     public void ChooseThisWord() {
         if (train.isCardSelected || isCardUsed)
             return;
+        train.leaveButton.interactable = false;
         targetSize = new Vector2(244, 400);
         targetPosition = new Vector3(-360, -640, 0);
         answerInputField.SetActive(true);
@@ -57,15 +77,6 @@ public class cardManager : MonoBehaviour, IPointerClickHandler
     }
     void Update()
     {
-        /*
-                if (Input.GetKeyDown(KeyCode.D)) {
-                    ShowWordSide();
-                }
-                if (Input.GetKeyDown(KeyCode.A)) {
-                    ShowTranslationSide();
-                }
-        */
-
         #region sizeSupport
         Vector2 curSize = new Vector2(GetComponent<RectTransform>().sizeDelta.x, GetComponent<RectTransform>().sizeDelta.y);
         if (targetSize != curSize) {
