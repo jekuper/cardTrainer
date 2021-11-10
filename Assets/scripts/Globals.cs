@@ -49,19 +49,8 @@ public static class Globals
         return 0;
     }
     private static int statComp(int x, int y) {
-        int cnt1 = 0, cnt2 = 0;
-        foreach (int item in dataBase[x].statistic) {
-            if (item == 0)
-                cnt1--;
-            else
-                cnt1++;
-        }
-        foreach (int item in dataBase[y].statistic) {
-            if (item == 0)
-                cnt2--;
-            else
-                cnt2++;
-        }
+        int cnt1 = dataBase[x].remembered - dataBase[x].forgotten;
+        int cnt2 = dataBase[y].remembered - dataBase[y].forgotten;
         return cnt1.CompareTo(cnt2);
     }
     public static List<int> sortByStatistic(int cnt) {

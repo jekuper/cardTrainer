@@ -18,7 +18,6 @@ public class forgotZone : MonoBehaviour, IPointerClickHandler {
         if (!chosenCard.isCardOpened) {
             chosenCard.ShowTranslationSide();
             
-            Globals.dataBase[chosenCard.carryWordInd].refreshTime();
             SaveSystem.SaveWordData(Settings.curLang);
         }
         else {

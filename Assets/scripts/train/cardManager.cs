@@ -34,7 +34,7 @@ public class cardManager : MonoBehaviour, IPointerClickHandler
     public void ShowTranslationSide() {
         targetAngle = new Vector3(0, 180, 0);
         isCardOpened = true;
-        Globals.dataBase[carryWordInd].statistic.Add(0);
+        Globals.dataBase[carryWordInd].forgotten++;
     }
     public void LoadWord() {
         string front, back;

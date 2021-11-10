@@ -4,9 +4,11 @@ using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 using System.Linq;
+using Newtonsoft.Json;
 
 public static class SaveSystem
 {
+    
     #region base_system
     public static void SaveId(string fileId, string data) {
         string path = Application.persistentDataPath + "/" + fileId + ".save";
@@ -38,10 +40,10 @@ public static class SaveSystem
         return lines;
     }
 
-    private static string SearchLoaderVersion(Version version) {
+    private static string SearchLoaderVersion(Version version, Dictionary<string, Action<string[]>> loaders) {
         string prev = null;
         string resVersion = null;
-        foreach (KeyValuePair<string, Action<string[]>> entry in wordLoaders) {
+        foreach (KeyValuePair<string, Action<string[]>> entry in loaders) {
             Version cur = new Version(entry.Key);
             if (version == null) {
                 resVersion = entry.Key;
@@ -71,6 +73,7 @@ public static class SaveSystem
     #region word_system
     private static Dictionary<string, Action<string[]>> wordLoaders = new Dictionary<string, Action<string[]>>() {
         {"2.1.3", (string[] s) => WLoader2_1_3(s)},
+        {"2.2.1", (string[] s) => WLoader2_2_1(s)},
     };
 
     public static void LoadWordData(string language) {
@@ -79,26 +82,44 @@ public static class SaveSystem
             return;
         string[] lines = LoadId(language);
         string version = LoadFileVersion(language);
-        string resVersion = SearchLoaderVersion((version != null ? new Version(version) : null));
+        string resVersion = SearchLoaderVersion((version != null ? new Version(version) : null), wordLoaders);
 
         wordLoaders[resVersion](lines);
     }
     public static void SaveWordData(string language) {
-        string encrypted = "";
-        foreach (word item in Globals.dataBase) {
-            encrypted += item.toOneString();
-            encrypted += "\n";
-        }
-        if (encrypted.Length > 0)
-            encrypted = encrypted.Remove(encrypted.Length - 1);
+        string encrypted = JsonConvert.SerializeObject(Globals.dataBase);
         SaveId(language, encrypted);
     }
     
     #region load handlers
     private static void WLoader2_1_3(string[] lines) {
-        foreach (var line in lines) {
-            Globals.dataBase.Add(new word(line));
+        foreach (var oneString in lines) {
+            word w = new word();
+            string[] dt = oneString.Split('-');
+            w.fullWord = dt[0];
+            w.translation = new List<string>(dt[1].Split('|'));
+            w.translation.RemoveAt(w.translation.Count - 1);
+            w.definition = dt[2];
+
+            foreach (string item in dt[3].Split('|')) {
+                if (item != "") {
+                    int v = int.Parse(item);
+                    if (v == 1)
+                        w.remembered++;
+                    else
+                        w.forgotten++;
+                }
+            }
+            var time = DateTime.ParseExact(dt[4], "G", null);//no longer exist in 2.2.1 or above
+            Globals.dataBase.Add(w);
         }
+    }
+    private static void WLoader2_2_1(string[] lines) {
+        string file = "";
+        foreach (var line in lines) {
+            file += line + "\n";
+        }
+        Globals.dataBase = JsonConvert.DeserializeObject<List<word>>(file);
     }
     #endregion
 
@@ -113,7 +134,7 @@ public static class SaveSystem
     public static void LoadSettingsData() {
         string[] lines = LoadId("settings");
         string version = LoadFileVersion("settings");
-        string resVersion = SearchLoaderVersion((version != null ? new Version(version) : null));
+        string resVersion = SearchLoaderVersion((version != null ? new Version(version) : null), SettingsLoaders);
         SettingsLoaders[resVersion](lines);
     }
     public static void SaveSettingsData() {

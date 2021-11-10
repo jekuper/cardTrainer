@@ -43,15 +43,15 @@ public class editor : MonoBehaviour
         trManager.copy = new List<string>(w.translation);
         trManager.InitList();
         definitionInputField.text = word.decrypt(Globals.dataBase[ind].definition);
-        stManager.LoadStatistic(w.statistic);
+        stManager.LoadStatistic(w);
         targetPosition = new Vector2(0, 0);
     }
     public void HideEditor(bool saveChages) {
         mask.SetActive(false);
         if (saveChages) {
-            List<int> statistic = new List<int>(Globals.dataBase[selectedWordInd].statistic);
+            int rem = Globals.dataBase[selectedWordInd].remembered, forg = Globals.dataBase[selectedWordInd].forgotten;
             Globals.DeleteWord(selectedWordInd);
-            Globals.AddWord(new word(wordInputField.text, trManager.copy, definitionInputField.text, statistic));
+            Globals.AddWord(new word(wordInputField.text, trManager.copy, definitionInputField.text, rem, forg));
             arch.UpdateWordList();
         }
         targetPosition = new Vector2(0, -canvas.GetComponent<RectTransform>().rect.height);

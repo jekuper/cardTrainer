@@ -4,12 +4,13 @@ using UnityEngine;
 using TMPro;
 using System;
 
+[Serializable]
 public class word {
     public string fullWord;
-    public string definition;
+    public string definition = "";
     public List<string> translation = new List<string>();
-    public DateTime time;
-    public List<int> statistic = new List<int>();
+    public int remembered = 0;
+    public int forgotten = 0;
 
     public word() { }
 
@@ -19,53 +20,16 @@ public class word {
         str = str.Replace("|", "#upSlash#");
         return str;
     }
-    public word(string _fullWord, List<string> _translation, string _definition = "", List<int> _statistic = null) {
-        _statistic = _statistic ?? new List<int>();
-
+    public word(string _fullWord, List<string> _translation, string _definition = "", int rem = 0, int forg = 0) {
+        
         fullWord = SanitizeString(_fullWord);
         translation.Clear();
         foreach (string tr in _translation) {
             translation.Add(SanitizeString(tr));
         }
         definition = SanitizeString(_definition);
-        statistic.Clear();
-        foreach (int item in _statistic) {
-            statistic.Add(item);
-        }
-        refreshTime();
-    }
-    public word(string oneString) {
-        string[] dt = oneString.Split('-');
-        fullWord = dt[0];
-        translation = new List<string>(dt[1].Split('|'));
-        translation.RemoveAt(translation.Count - 1);
-        definition = dt[2];
-
-        foreach (string item in dt[3].Split('|')) {
-            if (item != "")
-                statistic.Add(int.Parse(item));
-        }
-        time = DateTime.ParseExact(dt[4], "G", null);
-    }
-    public string toOneString() {
-        string ans = "";
-        ans += fullWord;
-        ans += "-";
-        foreach (var tr in translation) {
-            ans += tr + "|";
-        }
-        ans += "-";
-        ans += definition;
-        ans += "-";
-        foreach (int item in statistic) {
-            ans += item.ToString() + "|";
-        }
-        ans += "-";
-        ans += time.ToString("G");
-        return ans;
-    }
-    public void refreshTime() {
-        time = DateTime.Now;
+        remembered = rem;
+        forgotten = forg;
     }
     public static string decrypt(string data) {
         data = data.Replace("#dash#", "-");
