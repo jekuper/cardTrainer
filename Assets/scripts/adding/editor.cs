@@ -50,8 +50,10 @@ public class editor : MonoBehaviour
         mask.SetActive(false);
         if (saveChages) {
             int rem = Globals.dataBase[selectedWordInd].remembered, forg = Globals.dataBase[selectedWordInd].forgotten;
+            int trSc = Globals.dataBase[selectedWordInd].translationScore;
+            int fwSc = Globals.dataBase[selectedWordInd].fullWordScore;
             Globals.DeleteWord(selectedWordInd);
-            Globals.AddWord(new word(wordInputField.text, trManager.copy, definitionInputField.text, rem, forg));
+            Globals.AddWord(new word(wordInputField.text, trManager.copy, definitionInputField.text, rem, forg, trSc, fwSc));
             arch.UpdateWordList();
         }
         targetPosition = new Vector2(0, -canvas.GetComponent<RectTransform>().rect.height);

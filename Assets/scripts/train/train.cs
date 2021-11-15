@@ -32,7 +32,7 @@ public class train : MonoBehaviour
             cm.targetPosition = cm.startPosition;
             cm.isCardUsed = false;
             cm.isCardChoosed = false;
-            cm.isCardInputReversed = (Random.value < 0.5f);
+            cm.isCardInputReversed = (Globals.dataBase[res[i]].translationScore < Globals.dataBase[res[i]].fullWordScore);
             cm.carryWordInd = res[i];
             cm.wordTranslationInd = -1;
             cm.LoadWord();

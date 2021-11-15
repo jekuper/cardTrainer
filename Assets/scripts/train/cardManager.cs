@@ -35,6 +35,21 @@ public class cardManager : MonoBehaviour, IPointerClickHandler
         targetAngle = new Vector3(0, 180, 0);
         isCardOpened = true;
         Globals.dataBase[carryWordInd].forgotten++;
+        if (isCardInputReversed) {
+            Globals.dataBase[carryWordInd].translationScore--;
+        }
+        else {
+            Globals.dataBase[carryWordInd].fullWordScore--;
+        }
+    }
+    public void AcceptCard() {
+        Globals.dataBase[carryWordInd].remembered++;
+        if (isCardInputReversed) {
+            Globals.dataBase[carryWordInd].translationScore++;
+        }
+        else {
+            Globals.dataBase[carryWordInd].fullWordScore++;
+        }
     }
     public void LoadWord() {
         string front, back;

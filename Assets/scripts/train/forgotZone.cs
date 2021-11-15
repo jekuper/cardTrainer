@@ -17,7 +17,6 @@ public class forgotZone : MonoBehaviour, IPointerClickHandler {
         cardManager chosenCard = train.chosenCard.GetComponent<cardManager>();
         if (!chosenCard.isCardOpened) {
             chosenCard.ShowTranslationSide();
-            
             SaveSystem.SaveWordData(Settings.curLang);
         }
         else {

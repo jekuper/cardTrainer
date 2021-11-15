@@ -26,6 +26,12 @@ public class mobileNot : MonoBehaviour
         SendRepeat(notification, reminderChannelId, new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 8, 0, 0));
         SendRepeat(notification, reminderChannelId, new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 13, 0, 0));
         SendRepeat(notification, reminderChannelId, new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 18, 0, 0));
+        
+        AndroidNotificationCenter.NotificationReceivedCallback receivedNotificationHandler =
+            delegate (AndroidNotificationIntentData data) {
+                AndroidNotificationCenter.CancelAllDisplayedNotifications();
+            };
+        AndroidNotificationCenter.OnNotificationReceived += receivedNotificationHandler;
     }
 
     AndroidNotificationChannel InitChannel(string id) {

@@ -11,6 +11,8 @@ public class word {
     public List<string> translation = new List<string>();
     public int remembered = 0;
     public int forgotten = 0;
+    public int fullWordScore = 0;
+    public int translationScore = 0;
 
     public word() { }
 
@@ -20,7 +22,7 @@ public class word {
         str = str.Replace("|", "#upSlash#");
         return str;
     }
-    public word(string _fullWord, List<string> _translation, string _definition = "", int rem = 0, int forg = 0) {
+    public word(string _fullWord, List<string> _translation, string _definition = "", int rem = 0, int forg = 0, int fwScore = 0, int trScore = 0) {
         
         fullWord = SanitizeString(_fullWord);
         translation.Clear();
@@ -30,6 +32,8 @@ public class word {
         definition = SanitizeString(_definition);
         remembered = rem;
         forgotten = forg;
+        fullWordScore = fwScore;
+        translationScore = trScore;
     }
     public static string decrypt(string data) {
         data = data.Replace("#dash#", "-");

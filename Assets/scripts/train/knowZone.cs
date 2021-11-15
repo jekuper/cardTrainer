@@ -23,7 +23,7 @@ public class knowZone : MonoBehaviour, IPointerClickHandler {
         if (answer != null && answer.activeSelf && answer.GetComponent<TMP_InputField>().text != "") {
             if((!chosenCard.isCardInputReversed && Globals.dataBase[ind].checkAnswer(answer.GetComponent<TMP_InputField>().text)) ||
                 (chosenCard.isCardInputReversed && Globals.dataBase[ind].fullWord == answer.GetComponent<TMP_InputField>().text)) {
-                Globals.dataBase[ind].remembered++;
+                chosenCard.AcceptCard();
                 SaveSystem.SaveWordData(Settings.curLang);
 
                 Vector2 pos = eventData.position;
