@@ -7,9 +7,10 @@ using System.IO;
 
 public static class Globals
 {
+
     public static List<word> dataBase = new List<word>();
 
-    public static void AddWord(word w) {
+    public static void AddWord(word w, bool resetScores = true) {
         bool isFound = false;
         for (int i = 0; i < dataBase.Count; i++) {
             if (dataBase[i].fullWord == w.fullWord) {
@@ -23,6 +24,17 @@ public static class Globals
             }
         }
         if (!isFound) {
+            if (resetScores) {
+                int mnScore = 1000000000;
+                for (int i = 0; i < dataBase.Count; i++) {
+                    mnScore = Mathf.Min (mnScore, dataBase[i].remembered - dataBase[i].forgotten);
+                }
+                if (mnScore > 0) {
+                    for (int i = 0; i < dataBase.Count; i++) {
+                        dataBase[i].remembered -= mnScore;
+                    }
+                }
+            }
             dataBase.Add(w);
         }
 
@@ -49,8 +61,18 @@ public static class Globals
         return 0;
     }
     private static int statComp(int x, int y) {
-        int cnt1 = dataBase[x].remembered - dataBase[x].forgotten;
-        int cnt2 = dataBase[y].remembered - dataBase[y].forgotten;
+        float cnt1 = dataBase[x].remembered - dataBase[x].forgotten;
+        /*
+        if (dataBase[x].forgotten + dataBase[x].remembered != 0)
+            cnt1 = dataBase[x].remembered / (float)(dataBase[x].forgotten + dataBase[x].remembered);
+        */
+        float cnt2 = dataBase[y].remembered - dataBase[y].forgotten;
+        /*
+        if (dataBase[y].forgotten + dataBase[y].remembered != 0)
+            cnt2 = dataBase[y].remembered / (float)(dataBase[y].forgotten + dataBase[y].remembered);
+        else
+            cnt2 = 0;
+        */
         return cnt1.CompareTo(cnt2);
     }
     public static List<int> sortByStatistic(int cnt) {
@@ -86,6 +108,9 @@ public static class Globals
 
 
 public static class ScaleSystem {
+
+    public static Vector2 canvasScaleSize = new Vector2 (720, 1280);
+
     public static Vector2 scalePosToCanvas(Vector2 posOnScreen, RectTransform canvas) {
         return new Vector2(posOnScreen.x / Screen.width * canvas.rect.width, posOnScreen.y / Screen.height * canvas.rect.height);
     }

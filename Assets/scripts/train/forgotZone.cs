@@ -21,17 +21,12 @@ public class forgotZone : MonoBehaviour, IPointerClickHandler {
         }
         else {
             Vector2 pos = eventData.position;
-            pos = ScaleSystem.scalePosToCanvas(pos, canvas.GetComponent<RectTransform>());
-            pos = new Vector2(pos.x - (canvas.GetComponent<RectTransform>().rect.width), pos.y - (canvas.GetComponent<RectTransform>().rect.height));
-
-            Vector2 cardSizes = new Vector2(chosenCard.GetComponent<RectTransform>().rect.width, chosenCard.GetComponent<RectTransform>().rect.width);
-            pos = new Vector2(Mathf.Clamp(pos.x, -(canvas.GetComponent<RectTransform>().rect.width) + (cardSizes.x / 4), -cardSizes.x / 4), 
-                              Mathf.Clamp(pos.y, (cardSizes.y / 2) - canvas.GetComponent<RectTransform>().rect.height, rt.anchoredPosition.y + (rt.rect.height / 2) - (canvas.GetComponent<RectTransform>().rect.height / 2) - (cardSizes.y / 2)));
-
+            RectTransformUtility.ScreenPointToLocalPointInRectangle (canvas.GetComponent<RectTransform>(), eventData.position, Camera.main, out pos);
 
             chosenCard.ShowWordSide();
-            chosenCard.targetPosition = pos;
-            chosenCard.targetSize /= 2;
+            chosenCard.targetSize = new Vector2(122, 200);
+            chosenCard.setTargetPositionToTouch (canvas.GetComponent<RectTransform>(), eventData.position, GetComponent<RectTransform>().rect.size.y);
+//            chosenCard.targetPosition = pos;
             train.isCardSelected = false;
             train.chosenCard = null;
             train.leaveButton.interactable = true;

@@ -13,11 +13,11 @@ public class statisticManager : MonoBehaviour
         maxHeight = remember.sizeDelta.y;
     }
     public void LoadStatistic(word w) {
-        int cnt1 = w.remembered, cnt0 = w.forgotten;
+        int cnt1 = w.rememberedTotal, cnt0 = w.forgottenTotal;
         remText.text = "remembered: " + cnt1.ToString();
         forgText.text = "forgotten: " + cnt0.ToString();
-        if (cnt0 != 0)
-            percentageText.text = ((int)((float)cnt1 / (float)cnt0 * 100)).ToString() + "%";
+        if (cnt0 + cnt1 != 0)
+            percentageText.text = ((int)((float)cnt1 / ((float)cnt0 + cnt1) * 100)).ToString() + "%";
         if (cnt1 >= cnt0) {
             remember.sizeDelta = new Vector2(remember.sizeDelta.x, maxHeight);
             if (cnt1 != 0)
@@ -32,7 +32,7 @@ public class statisticManager : MonoBehaviour
         if (cnt1 == 0) {
             remember.sizeDelta = new Vector2(remember.sizeDelta.x, 2);
         }
-        if (cnt0 == 0) {
+        if (cnt0 + cnt1 == 0) {
             percentageText.text = "--%";
             forget.sizeDelta = new Vector2(forget.sizeDelta.x, 2);
         }

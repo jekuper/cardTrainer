@@ -15,8 +15,8 @@ public class cardManager : MonoBehaviour, IPointerClickHandler
     public bool isCardChoosed = false;
     public bool isCardInputReversed = false;
     [Range(0, 360)]public float rotSpeed = 100f;
-    [Range(0.001f, 1)] public float sizeLerp = 0.1f;
-    [Range(0.001f, 1)] public float posLerp = 0.1f;
+    [Range(0.001f, 1)] public float sizeTiming = 0.1f;
+    [Range(0.001f, 1)] public float posTiming = 0.1f;
     public int wordTranslationInd = -1;
     public int carryWordInd;
 
@@ -25,6 +25,9 @@ public class cardManager : MonoBehaviour, IPointerClickHandler
     public Vector2 targetPosition = new Vector2(0, 0);
     public Vector2 targetSize = new Vector2(0, 0);
     public Vector2 startPosition;
+
+    private Vector2 sizeVelocity;
+    private Vector2 posVelocity;
 
 
     public void ShowWordSide() {
@@ -35,6 +38,7 @@ public class cardManager : MonoBehaviour, IPointerClickHandler
         targetAngle = new Vector3(0, 180, 0);
         isCardOpened = true;
         Globals.dataBase[carryWordInd].forgotten++;
+        Globals.dataBase[carryWordInd].forgottenTotal++;
         if (isCardInputReversed) {
             Globals.dataBase[carryWordInd].translationScore--;
         }
@@ -44,6 +48,7 @@ public class cardManager : MonoBehaviour, IPointerClickHandler
     }
     public void AcceptCard() {
         Globals.dataBase[carryWordInd].remembered++;
+        Globals.dataBase[carryWordInd].rememberedTotal++;
         if (isCardInputReversed) {
             Globals.dataBase[carryWordInd].translationScore++;
         }
@@ -80,8 +85,8 @@ public class cardManager : MonoBehaviour, IPointerClickHandler
         if (train.isCardSelected || isCardUsed)
             return;
         train.leaveButton.interactable = false;
-        targetSize = new Vector2(244, 400);
-        targetPosition = new Vector3(-360, -640, 0);
+        targetSize = new Vector2(305, 500);
+        targetPosition = new Vector3(0, -357, 0);
         answerInputField.SetActive(true);
         transform.SetAsLastSibling();
     }
@@ -98,7 +103,7 @@ public class cardManager : MonoBehaviour, IPointerClickHandler
             if (Mathf.Abs(curSize.x - targetSize.x) < 5 && Mathf.Abs(curSize.y - targetSize.y) < 5) {
                 curSize = targetSize;
             } else
-                curSize = Vector2.Lerp(curSize, targetSize, sizeLerp);
+                curSize = Vector2.SmoothDamp(curSize, targetSize, ref sizeVelocity, sizeTiming);
             GetComponent<RectTransform>().sizeDelta = curSize;
         }
         #endregion
@@ -109,9 +114,11 @@ public class cardManager : MonoBehaviour, IPointerClickHandler
             if (Mathf.Abs(curPos.x - targetPosition.x) < 5 && Mathf.Abs(curPos.y - targetPosition.y) < 5) {
                 curPos = targetPosition;
             } else
-                curPos = Vector2.Lerp(curPos, targetPosition, posLerp);
+                curPos = Vector2.SmoothDamp (curPos, targetPosition, ref posVelocity, posTiming);
             GetComponent<RectTransform>().anchoredPosition = curPos;
         }
+//        if (name == "card")
+//            Debug.Log (GetComponent<RectTransform>().anchoredPosition);
         #endregion
 
         #region rotationSupport
@@ -145,6 +152,21 @@ public class cardManager : MonoBehaviour, IPointerClickHandler
             LoadWord();
         }
         #endregion
+    }
+
+    public void setTargetPositionToTouch (RectTransform canvas, Vector2 touchPos, float borderHeight, bool isForgotZone = true) {
+        Vector2 pos = touchPos;
+        RectTransformUtility.ScreenPointToLocalPointInRectangle (transform.parent.GetComponent<RectTransform> (), touchPos, Camera.main, out pos);
+
+//        Debug.Log (pos.y);
+        targetPosition = new Vector2(pos.x, pos.y - canvas.rect.size.y / 2);
+        if (isForgotZone)
+            targetPosition = new Vector2    (Mathf.Clamp (targetPosition.x, -ScaleSystem.canvasScaleSize.x / 2 + targetSize.x / 2, ScaleSystem.canvasScaleSize.x / 2 - targetSize.x / 2),
+                                             Mathf.Clamp (targetPosition.y, -canvas.rect.size.y + borderHeight + targetSize.y / 2, -canvas.rect.size.y + borderHeight + borderHeight - targetSize.y / 2));
+        else
+            targetPosition = new Vector2 (Mathf.Clamp (targetPosition.x, -ScaleSystem.canvasScaleSize.x / 2 + targetSize.x / 2, ScaleSystem.canvasScaleSize.x / 2 - targetSize.x / 2),
+                                         Mathf.Clamp (targetPosition.y, -canvas.rect.size.y + targetSize.y / 2, -canvas.rect.size.y + borderHeight - targetSize.y / 2));
+        Debug.Log (-canvas.rect.size.y + borderHeight + borderHeight - targetSize.y / 2);
     }
 
     public void OnPointerClick(PointerEventData eventData) {
