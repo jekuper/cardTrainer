@@ -19,6 +19,15 @@ Keeping tabs on your learning journey is crucial, and card Trainer excels at thi
 The app goes a step further by utilizing the data it collects on your progress. Based on your performance, it intelligently curates the words that will appear in your next training session. This adaptive learning approach ensures that you're consistently challenged and that your language skills continue to grow.
 
 
+<p align="center">
+<img width="16%" src="https://github.com/jekuper/cardTrainer/blob/master/readme_supplimental/1.png?raw=true" alt="screenshots">
+<img width="16%" src="https://github.com/jekuper/cardTrainer/blob/master/readme_supplimental/2.png?raw=true" alt="screenshots">
+<img width="16%" src="https://github.com/jekuper/cardTrainer/blob/master/readme_supplimental/3.png?raw=true" alt="screenshots">
+<img width="16%" src="https://github.com/jekuper/cardTrainer/blob/master/readme_supplimental/4.png?raw=true" alt="screenshots">
+<img width="16%" src="https://github.com/jekuper/cardTrainer/blob/master/readme_supplimental/5.png?raw=true" alt="screenshots">
+<img width="16%" src="https://github.com/jekuper/cardTrainer/blob/master/readme_supplimental/6.png?raw=true" alt="screenshots">
+</p>
+
 ## What's on the Horizon
 We are committed to making your language learning experience even more exceptional. Here's a glimpse of what we have in store for future updates:
 
