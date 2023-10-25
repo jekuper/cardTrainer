@@ -36,6 +36,10 @@ public class train : MonoBehaviour
             return;
         }
         singleton = this;
+        cardsLeft = 10;
+        isCardSelected = false;
+        chosenCard = null;
+
         refreshCards();
         leaveButton = leaveButtonSnipper;
     }
