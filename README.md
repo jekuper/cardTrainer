@@ -4,6 +4,10 @@
 
 The card Trainer is an user-friendly educational application that harnesses the power of flash card training techniques to help you master new languages effortlessly. Learning a new language can be a daunting task, but with card Trainer, the process becomes engaging, efficient, and more effective than ever before.
 
+## Download
+
+ - Android - https://github.com/jekuper/cardTrainer/blob/master/build.apk
+
 ## Explore Features
 
 ### Multilingual Dictionaries
