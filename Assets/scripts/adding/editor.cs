@@ -7,7 +7,7 @@ using UnityEngine.UI;
 public class editor : MonoBehaviour
 {
     public Vector2 targetPosition;
-    public GameObject canvas;
+    public Canvas canvas;
     [Range(0.001f, 1)] public float posLerp = 0.1f;
     public int selectedWordInd = -1;
 
@@ -23,8 +23,9 @@ public class editor : MonoBehaviour
     void Start()
     {
         rt = GetComponent<RectTransform>();
-        rt.anchoredPosition = new Vector2(0, -canvas.GetComponent<RectTransform>().rect.height);
-        targetPosition = rt.anchoredPosition;
+        rt.sizeDelta = new Vector2 (rt.sizeDelta.x, 1100 * Screen.height / canvas.scaleFactor / canvas.GetComponent<CanvasScaler> ().referenceResolution.y);
+        targetPosition = new Vector2(0, rt.sizeDelta.y / 2 * -1f);
+        rt.anchoredPosition = targetPosition;
     }
 
     public void ShowEditor(word w) {
@@ -44,7 +45,7 @@ public class editor : MonoBehaviour
         trManager.InitList();
         definitionInputField.text = word.decrypt(Globals.dataBase[ind].definition);
         stManager.LoadStatistic(w);
-        targetPosition = new Vector2(0, 0);
+        targetPosition = new Vector2(0, (Screen.height) / 2 / canvas.scaleFactor);
     }
     public void HideEditor(bool saveChages) {
         mask.SetActive(false);
@@ -57,7 +58,7 @@ public class editor : MonoBehaviour
             Globals.AddWord(new word(wordInputField.text, trManager.copy, definitionInputField.text, rem, forg, remTotal, forgTotal, trSc, fwSc), false);
             arch.UpdateWordList();
         }
-        targetPosition = new Vector2(0, -canvas.GetComponent<RectTransform>().rect.height);
+        targetPosition = new Vector2 (0, rt.sizeDelta.y / 2 * -1f);
         selectedWordInd = -1;
         wordInputField.text = "";
 //        translationInputField.text = "";
@@ -66,14 +67,12 @@ public class editor : MonoBehaviour
     void Update()
     {
         #region positionSupport
-        Vector2 curPos = GetComponent<RectTransform>().anchoredPosition;
-        if (targetPosition != curPos) {
-            if (Mathf.Abs(curPos.x - targetPosition.x) < 5 && Mathf.Abs(curPos.y - targetPosition.y) < 5) {
-                curPos = targetPosition;
-            }
-            else
-                curPos = Vector2.Lerp(curPos, targetPosition, posLerp);
-            GetComponent<RectTransform>().anchoredPosition = curPos;
+        Vector2 curPos = rt.anchoredPosition;
+        if (Vector2.Distance (curPos, targetPosition) > 0.01) {
+            curPos = Vector2.Lerp (curPos, targetPosition, posLerp);
+            rt.anchoredPosition = curPos;
+        } else {
+            rt.anchoredPosition = targetPosition;
         }
         #endregion
     }

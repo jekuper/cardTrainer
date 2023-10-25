@@ -2,38 +2,41 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using UnityEngine.UI;
 
 public class pushReminder : MonoBehaviour
 {
     public Vector2 targetPosition;
-    public RectTransform canvas;
+    public Canvas canvas;
     public TextMeshProUGUI txt;
     public GameObject mask;
     [Range(0.001f, 1)]public float posLerp = 0.1f;
 
+    private RectTransform rt;
+
     public void ShowReminder(string text) {
         mask.SetActive(true);
         txt.text = text;
-        targetPosition = new Vector2(0, 0);
+        targetPosition = new Vector2 (0, (Screen.height) / 2 / canvas.scaleFactor);
     }
     public void HideReminder() {
         mask.SetActive(false);
-        targetPosition = new Vector2(0, -canvas.rect.height);
+        targetPosition = new Vector2 (0, rt.sizeDelta.y / 2 * -1f);
     }
     private void Start() {
-        GetComponent<RectTransform>().anchoredPosition = new Vector2(0, -canvas.rect.height);
-        targetPosition = GetComponent<RectTransform>().anchoredPosition;
+        rt = GetComponent<RectTransform> ();
+        rt.sizeDelta = new Vector2 (rt.sizeDelta.x, 1100 * Screen.height / canvas.scaleFactor / canvas.GetComponent<CanvasScaler> ().referenceResolution.y);
+        targetPosition = new Vector2 (0, rt.sizeDelta.y / 2 * -1f);
+        rt.anchoredPosition = targetPosition;
     }
     private void Update() {
         #region positionSupport
-        Vector2 curPos = GetComponent<RectTransform>().anchoredPosition;
-        if (targetPosition != curPos) {
-            if (Mathf.Abs(curPos.x - targetPosition.x) < 5 && Mathf.Abs(curPos.y - targetPosition.y) < 5) {
-                curPos = targetPosition;
-            }
-            else
-                curPos = Vector2.Lerp(curPos, targetPosition, posLerp);
-            GetComponent<RectTransform>().anchoredPosition = curPos;
+        Vector2 curPos = rt.anchoredPosition;
+        if (Vector2.Distance(curPos, targetPosition) > 0.01) {
+            curPos = Vector2.Lerp(curPos, targetPosition, posLerp);
+            rt.anchoredPosition = curPos;
+        } else {
+            rt.anchoredPosition = targetPosition;
         }
         #endregion
     }

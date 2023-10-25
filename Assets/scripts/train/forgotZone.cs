@@ -30,6 +30,9 @@ public class forgotZone : MonoBehaviour, IPointerClickHandler {
             train.isCardSelected = false;
             train.chosenCard = null;
             train.leaveButton.interactable = true;
+            if (train.cardsLeft == 0) {
+                train.singleton.ShowGameStats ();
+            }
         }
     }
 }

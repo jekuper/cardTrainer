@@ -4,12 +4,11 @@ using UnityEngine;
 
 public class settingsManager : MonoBehaviour
 {
+
+    public static settingsManager singleton;
+
     public GameObject langPrefab;
     public Transform listContent;
-    public void SaveSettings() {
-        SaveSystem.SaveSettingsData();
-        GetComponent<sceneCameraManager>().ChangeScene("startMenu");
-    }
     public void UpdateList() {
         foreach (Transform child in listContent) {
             Destroy(child.gameObject);
@@ -20,6 +19,11 @@ public class settingsManager : MonoBehaviour
         Instantiate(langPrefab, listContent);
     }
     private void Start() {
+        if (singleton != null) {
+            Destroy (gameObject);
+            return;
+        }
+        singleton = this;
         UpdateList();
     }
 }

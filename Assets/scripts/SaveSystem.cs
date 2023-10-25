@@ -161,4 +161,26 @@ public static class SaveSystem
     #endregion
 
     #endregion
+
+    public static List<trainRecord> LoadTrainStatistics () {
+        string[] lines = LoadId ("trainStats.save");
+
+        string file = "";
+        foreach (var line in lines) {
+            file += line + "\n";
+        }
+        if (file == "") {
+            return new List<trainRecord> ();
+        }
+        return JsonConvert.DeserializeObject<List<trainRecord>> (file);
+    }
+    public static void UpdateTrainStatistics (trainRecord newStats) {
+        List<trainRecord> l = LoadTrainStatistics ();
+        l.Add (newStats);
+        SaveTrainStatistics (l);
+    }
+    public static void SaveTrainStatistics (List<trainRecord> l) {
+        string encrypted = JsonConvert.SerializeObject (l);
+        SaveId ("trainStats.save", encrypted);
+    }
 }

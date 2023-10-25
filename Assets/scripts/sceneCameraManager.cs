@@ -21,7 +21,7 @@ public class sceneCameraManager : MonoBehaviour
                 Debug.LogWarning("reminder is not set. Object name: " + name);
             return;
         }
-        SceneManager.LoadScene(sceneName);
+        SceneTransitionManager.singleton.In (sceneName);
     }
     public void QuitGame() {
         Application.Quit();

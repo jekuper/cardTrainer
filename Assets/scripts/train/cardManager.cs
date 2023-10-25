@@ -45,6 +45,7 @@ public class cardManager : MonoBehaviour, IPointerClickHandler
         else {
             Globals.dataBase[carryWordInd].fullWordScore--;
         }
+        train.forgottenCount++;
     }
     public void AcceptCard() {
         Globals.dataBase[carryWordInd].remembered++;
@@ -85,6 +86,7 @@ public class cardManager : MonoBehaviour, IPointerClickHandler
         if (train.isCardSelected || isCardUsed)
             return;
         train.leaveButton.interactable = false;
+        train.cardsLeft--;
         targetSize = new Vector2(305, 500);
         targetPosition = new Vector3(0, -357, 0);
         answerInputField.SetActive(true);
@@ -166,7 +168,6 @@ public class cardManager : MonoBehaviour, IPointerClickHandler
         else
             targetPosition = new Vector2 (Mathf.Clamp (targetPosition.x, -ScaleSystem.canvasScaleSize.x / 2 + targetSize.x / 2, ScaleSystem.canvasScaleSize.x / 2 - targetSize.x / 2),
                                          Mathf.Clamp (targetPosition.y, -canvas.rect.size.y + targetSize.y / 2, -canvas.rect.size.y + borderHeight - targetSize.y / 2));
-        Debug.Log (-canvas.rect.size.y + borderHeight + borderHeight - targetSize.y / 2);
     }
 
     public void OnPointerClick(PointerEventData eventData) {

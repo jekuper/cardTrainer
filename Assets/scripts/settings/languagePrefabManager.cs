@@ -46,6 +46,7 @@ public class languagePrefabManager : MonoBehaviour
         if (input.interactable)
             return;
         Settings.curLang = input.text;
+        SaveSystem.SaveSettingsData ();
         manager.UpdateList();
     }
 }

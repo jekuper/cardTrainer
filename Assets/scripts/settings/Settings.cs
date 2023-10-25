@@ -5,8 +5,6 @@ using UnityEngine;
 public static class Settings {
     public static string curLang = "";
     public static List<string> avLangs = new List<string>();
-    public static int notificationHour = 17;
-    public static int notificationMinute = 54;
 
 
     public static void AddLang(string lang) {
