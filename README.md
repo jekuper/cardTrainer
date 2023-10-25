@@ -1,4 +1,4 @@
-<img width="100%" src="https://github.com/jekuper/cardTrainer/blob/master/readme_supplemintal/banner.png?raw=true" alt="banner">
+<img width="100%" src="https://github.com/jekuper/cardTrainer/blob/master/readme_supplimental/banner.png?raw=true" alt="banner">
 
 # card Trainer
 
